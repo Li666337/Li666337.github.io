@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const currentTop = window.scrollY || document.documentElement.scrollTop
 
       if (isToc && GLOBAL_CONFIG.percent.toc) {
-        $tocPercentage.textContent = btf.getScrollPercent(currentTop, $article, false)
+        $tocPercentage.textContent = btf.getScrollPercent(currentTop, $article)
       }
 
       if (currentTop === 0) {
@@ -662,7 +662,6 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   const rightSideFn = {
     readmode: () => { // read mode
-      if (document.querySelector('.exit-readmode')) return
       const $body = document.body
       const newEle = document.createElement('button')
 
@@ -678,7 +677,6 @@ document.addEventListener('DOMContentLoaded', () => {
       newEle.innerHTML = '<i class="fas fa-sign-out-alt"></i>'
       newEle.addEventListener('click', exitReadMode)
       $body.appendChild(newEle)
-      btf.addGlobalFn('pjaxSendOnce', exitReadMode, 'exitReadMode')
     },
     darkmode: () => { // switch between light and dark mode
       const willChangeMode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
@@ -1012,12 +1010,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // 處理 hexo-blog-encrypt 事件
   window.addEventListener('hexo-blog-decrypt', e => {
     forPostFn()
-    if (window.translateFn && typeof window.translateFn.translateInitialization === 'function') {
-      window.translateFn.translateInitialization()
-    }
-
-    const encryptFn = window.globalFn && window.globalFn.encrypt ? window.globalFn.encrypt : {}
-    Object.values(encryptFn).forEach(fn => {
+    window.translateFn.translateInitialization()
+    Object.values(window.globalFn.encrypt).forEach(fn => {
       fn()
     })
   })
